@@ -1,0 +1,613 @@
+﻿{
+   "CodeGenerationMode": 3,
+   "ContextClassName": "Capmas-TestContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": "Capmas_Test",
+   "OutputContextPath": null,
+   "OutputPath": "Capmas_Test",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Context",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[agency_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[agency_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[app_settings]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[calendar_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[calendar_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[calendars]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[capmas_head_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[capmas_heads]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[capmas_histories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[capmas_history_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[capmas_sector_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[capmas_sectors]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[category_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[countries]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[country_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[data_requests]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[department_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[department_users]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[departments]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[egypt_population]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[egypt_statistics_journal_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[egypt_statistics_journals]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[element_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[elements]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[email_list_categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[email_list_category_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[email_lists]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[event_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[event_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[event_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[events]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[evidence_and_classification_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[evidence_and_classifications]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[files_library]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[film_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[film_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[filter_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[filters]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[forum_metadata_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[forum_metadatas]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[forum_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[forums]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[governorate_population]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[governorate_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[governorates]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[happening_now]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[happening_now_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[important_portal]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[important_portal_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[indicator_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[indicators]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[infographics]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[international_day_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[international_days]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[journal_category]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[journal_category_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[journalism_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[journalisms]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[language_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[languages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[law_regulation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[law_regulation_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[main_value_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[main_values]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[measure_unit_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[measure_units]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[menu_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[menus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[microfilm_data]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[migrations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news_bar_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news_bars]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news_categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news_email_list_categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news_tags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[news_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[page_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[pages]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[periodic_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[periodics]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[permission_modules]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[photo_album_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[photo_albums]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[photo_categories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[photo_category_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[photos]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_details]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_indicators]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_subscriptions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_tags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publication_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[publications]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[regional_office]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[regional_office_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[related_website_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[related_websites]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[role_permission]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[role_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[sector_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[sectors]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[security_questions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[service_and_tool_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[service_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[service_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[services_and_tools]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[site_selection_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[site_selections]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[slider_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[sliders]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[study_periods]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[study_periods_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[subject_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[subjects]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[subscription_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[subscription_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_censuse]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_censuse_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_question]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_question_option]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_question_option_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_question_option_vote ]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_question_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[survey_vote]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tag_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tags]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[training_program]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[training_program_application]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[training_program_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[user_security_questions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[video_library]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[video_library_category]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[video_library_category_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[video_library_translation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[website_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[website_types]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[year_type_translations]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[year_types]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "desktop-b2ps99a.Capmas-Test.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
