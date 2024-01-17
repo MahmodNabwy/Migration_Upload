@@ -26,9 +26,11 @@ namespace Services_Repository_Layer
                                 select new History_Details_DTO
                                 {
                                     id = q.HcaId,
-                                    HCA_StatusAr = q.HcaStatusAr,
-                                    HCA_StatYear = q.HcaStatYear,
-                                    HCA_PDFAr = q.HcaPdfar
+                                    titleAr = q.HcaStatusAr,
+                                    titleEn= q.HcaStatusEn,
+                                    Year = q.HcaStatYear,
+                                    PDF_Ar = q.HcaPdfar,
+                                    PDF_En=q.HcaPdfen,
                                 }).ToListAsync();
             return result;
         }

@@ -136,13 +136,15 @@ namespace Migration_Upload.Controllers
                     await _capmasContext.News.AddAsync(news);
                     await _capmasContext.SaveChangesAsync();
 
-                     
+
                     #region Re Write Path
                     byte[] enpdfBytes = System.IO.File.ReadAllBytes($"{dir}{file.NL_LinkEn}");
                     string enfilePath = Path.Combine(dir, "Admin/News/PressRelease/20147112448_619.pdf");
                     System.IO.File.WriteAllBytes(enfilePath, enpdfBytes);
                     var enPdfPath = await ReWriteFilePath(enfilePath, "2");
                     #endregion
+
+                    #region Insert Translation
 
                     var newsTranslation = new NewsTranslation();
                     newsTranslation.NewsId = news.Id;
@@ -152,6 +154,7 @@ namespace Migration_Upload.Controllers
                     newsTranslation.PdfUrl = enPdfPath != null ? enPdfPath : "https://capmas.gov.eg" + file.NL_LinkEn;
                     await _capmasContext.NewsTranslations.AddAsync(newsTranslation);
                     await _capmasContext.SaveChangesAsync();
+                    #endregion
                 }
             }
 
@@ -168,27 +171,44 @@ namespace Migration_Upload.Controllers
             var historyDetails = await _history_Details_Repo.GetAllHistoryDetails();
             var dir = _hostingEnvironment.WebRootPath;
 
-            //new_Pdf/2017220115351_احصاء مصر.pdf
+            //Example :new_Pdf/2017220115351_احصاء مصر.pdf
             foreach (var item in historyDetails)
             {
-                byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}/${item.HCA_PDFAr}");
-                string filePath = Path.Combine(dir, $"{item.HCA_PDFAr}");
+                #region Re Write Path AR
+                byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}/${item.PDF_Ar}");
+                string filePath = Path.Combine(dir, $"{item.PDF_Ar}");
                 System.IO.File.WriteAllBytes(filePath, pdfBytes);
-                #region Re Write Path
                 var newPdfPath = await ReWriteFilePath(filePath, "14");
                 #endregion
+
+
                 /* Insert Into  egypt_statistics_journals */
                 var egy_statistics_journal = new EgyptStatisticsJournal();
-                egy_statistics_journal.Year = int.Parse(item.HCA_StatYear);
+                egy_statistics_journal.Year = int.Parse(item.Year);
                 egy_statistics_journal.IsPdf = true;
-                egy_statistics_journal.Url = newPdfPath;
-                egy_statistics_journal.Title = item.HCA_StatusAr;
+                egy_statistics_journal.Url = newPdfPath != null ? newPdfPath : "https://capmas.gov.eg/" + item.PDF_Ar;
+                egy_statistics_journal.Title = item.titleAr;
                 egy_statistics_journal.IsPublished = true;
                 egy_statistics_journal.IsDeleted = false;
                 egy_statistics_journal.Status = 3;
 
                 await _capmasContext.EgyptStatisticsJournals.AddAsync(egy_statistics_journal);
                 await _capmasContext.SaveChangesAsync();
+                #region Re Write Path EN
+                byte[] pdfENBytes = System.IO.File.ReadAllBytes($"{dir}/${item.PDF_En}");
+                string fileENPath = Path.Combine(dir, $"{item.PDF_En}");
+                System.IO.File.WriteAllBytes(fileENPath, pdfBytes);
+                var enPdfPath = await ReWriteFilePath(fileENPath, "14");
+                #endregion
+
+
+
+                #region Insert Translation
+                var egy_statistics_translation = new EgyptStatisticsJournalTranslation();
+                egy_statistics_translation.Title = item.titleEn;
+                egy_statistics_translation.Locale = "en";
+                egy_statistics_translation.PdfUrl = enPdfPath != null ? enPdfPath : "https://capmas.gov.eg/" + item.PDF_En;
+                #endregion
 
 
             }
