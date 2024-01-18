@@ -56,6 +56,8 @@ namespace Migration_Upload.Controllers
                 await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
             }
         }
+        
+        
         private async Task<string?> ReWriteFilePath(string file, string directory)
         {
             using (var httpClient = new HttpClient())
@@ -113,6 +115,8 @@ namespace Migration_Upload.Controllers
                 var targetNew = _oldContext.TblNews.AsNoTracking().Where(c => c.NewsId == file.News_ID).FirstOrDefault();
                 if (targetNew is not null)
                 {
+                    #region Insert News
+                    
                     #region Re Write Path
                     //Replce with this below code when we got files
                     //byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}${file.NL_LinkAr}");
@@ -121,8 +125,7 @@ namespace Migration_Upload.Controllers
                     System.IO.File.WriteAllBytes(filePath, pdfBytes);
                     var arPdfPath = await ReWriteFilePath(filePath, "2");
                     #endregion
-
-                    //Insert Into Our News Table
+                     
                     var news = new News();
                     news.Brief = targetNew.NewsBriefAr;
                     news.IsPdf = true;
@@ -135,16 +138,18 @@ namespace Migration_Upload.Controllers
 
                     await _capmasContext.News.AddAsync(news);
                     await _capmasContext.SaveChangesAsync();
+                    #endregion
 
+                    #region Insert Translation
 
                     #region Re Write Path
+                    /* Todo : Make Check if file is already exist or not */
                     byte[] enpdfBytes = System.IO.File.ReadAllBytes($"{dir}{file.NL_LinkEn}");
                     string enfilePath = Path.Combine(dir, "Admin/News/PressRelease/20147112448_619.pdf");
                     System.IO.File.WriteAllBytes(enfilePath, enpdfBytes);
                     var enPdfPath = await ReWriteFilePath(enfilePath, "2");
                     #endregion
 
-                    #region Insert Translation
 
                     var newsTranslation = new NewsTranslation();
                     newsTranslation.NewsId = news.Id;
@@ -165,15 +170,15 @@ namespace Migration_Upload.Controllers
         [Route("MergeEgyptStatisticsJournalFiles")]
         public async Task<IActionResult> MergeEgyptStatisticsJournalFiles()
         {
-            //EgyptStatisticsJournalFiles directory : 14
 
-            //1-Get All History_Details Files From (NewCapmasWebsiteContext-History_Details) [Note We Want to get all .pdf files & HCS_ID = 5252]
             var historyDetails = await _history_Details_Repo.GetAllHistoryDetails();
             var dir = _hostingEnvironment.WebRootPath;
 
             //Example :new_Pdf/2017220115351_احصاء مصر.pdf
             foreach (var item in historyDetails)
             {
+                #region Insert EgyptStatisticsJournals
+
                 #region Re Write Path AR
                 byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}/${item.PDF_Ar}");
                 string filePath = Path.Combine(dir, $"{item.PDF_Ar}");
@@ -182,7 +187,6 @@ namespace Migration_Upload.Controllers
                 #endregion
 
 
-                /* Insert Into  egypt_statistics_journals */
                 var egy_statistics_journal = new EgyptStatisticsJournal();
                 egy_statistics_journal.Year = int.Parse(item.Year);
                 egy_statistics_journal.IsPdf = true;
@@ -194,6 +198,10 @@ namespace Migration_Upload.Controllers
 
                 await _capmasContext.EgyptStatisticsJournals.AddAsync(egy_statistics_journal);
                 await _capmasContext.SaveChangesAsync();
+                #endregion
+
+                #region Insert Translation
+
                 #region Re Write Path EN
                 byte[] pdfENBytes = System.IO.File.ReadAllBytes($"{dir}/${item.PDF_En}");
                 string fileENPath = Path.Combine(dir, $"{item.PDF_En}");
@@ -201,13 +209,16 @@ namespace Migration_Upload.Controllers
                 var enPdfPath = await ReWriteFilePath(fileENPath, "14");
                 #endregion
 
-
-
-                #region Insert Translation
                 var egy_statistics_translation = new EgyptStatisticsJournalTranslation();
-                egy_statistics_translation.Title = item.titleEn;
+                egy_statistics_translation.EgyptStatisticsJournalId = egy_statistics_journal.Id;
                 egy_statistics_translation.Locale = "en";
+                egy_statistics_translation.Title = item.titleEn;
                 egy_statistics_translation.PdfUrl = enPdfPath != null ? enPdfPath : "https://capmas.gov.eg/" + item.PDF_En;
+
+
+                await _capmasContext.EgyptStatisticsJournalTranslations.AddAsync(egy_statistics_translation);
+                await _capmasContext.SaveChangesAsync();
+
                 #endregion
 
 
