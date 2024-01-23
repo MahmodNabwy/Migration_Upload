@@ -127,59 +127,75 @@ namespace Migration_Upload.Controllers
                 var targetNew = _oldContext.TblNews.AsNoTracking().Where(c => c.NewsId == file.News_ID).FirstOrDefault();
                 if (targetNew is not null)
                 {
-                    #region Insert News
 
-                    #region Re Write Path
-                    //Replce with this below code when we got files
-                    //byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}${file.NL_LinkAr}");
-                    string filePath = Path.Combine(dir, "Admin/News/PressRelease/20147112448_619.pdf");
+                    #region Re Write AR Path
+                    string filePath = $"{dir}{file.NL_LinkAr}";
                     string? arPdfPath = null;
-                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}/Admin/News/PressRelease/20147112448_619.pdf");
-                        System.IO.File.WriteAllBytes(filePath, pdfBytes);
-                        arPdfPath = await ReWriteFilePath(filePath, "2");
-                    }
+                    //using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    //{
+                    //    byte[] pdfBytes = System.IO.File.ReadAllBytes(filePath);
+                    //    System.IO.File.WriteAllBytes(filePath, pdfBytes);
+                    //    arPdfPath = await ReWriteFilePath(filePath, "2");
+                    //}
                     #endregion
+
 
                     var news = new News();
-                    news.Brief = targetNew.NewsBriefAr;
-                    news.IsPdf = true;
-                    news.PdfUrl = arPdfPath != null ? arPdfPath : "https://capmas.gov.eg" + file.NL_LinkAr;
-                    news.PublishDate = targetNew.NewsPublishDate;
-                    news.Title = targetNew.NewsNameAr;
-                    news.IsPublished = true;
-                    news.IsDeleted = false;
-                    news.Status = 3;
+                    if (arPdfPath != null)
+                    {
 
-                    await _capmasContext.News.AddAsync(news);
-                    await _capmasContext.SaveChangesAsync();
-                    #endregion
+                        #region Insert News
+                        news.Brief = targetNew.NewsBriefAr;
+                        news.IsPdf = true;
+                        news.PdfUrl = arPdfPath != null ? arPdfPath : file.NL_LinkAr;
+                        news.PublishDate = targetNew.NewsPublishDate;
+                        news.Title = targetNew.NewsNameAr;
+                        news.IsPublished = true;
+                        news.IsDeleted = false;
+                        news.Status = 3;
 
-                    #region Insert Translation
+                        await _capmasContext.News.AddAsync(news);
+                        await _capmasContext.SaveChangesAsync();
+                        #endregion
+                    }
+                    else
+                    {
+                        //Store the failed ar pdf to recycle_news_ar_pdf
+                        var pdfBytes = System.IO.File.ReadAllBytes(filePath);
 
-                    #region Re Write Path                    
-                    string enfilePath = Path.Combine(dir, "Admin/News/PressRelease/20147112448_619.pdf");
+                        var pdfFileName =  $"{dir}/recycle_news_ar_pdf";
+                        var pdfFilePath = Path.Combine(dir, pdfFileName);
+
+                        await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
+                    }
+
+                    #region Re Write EN Path          
+
+
+                    string enfilePath = $"{dir}{file.NL_LinkEn}";
                     string? enPdfPath = null;
                     using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
 
-                        byte[] enpdfBytes = System.IO.File.ReadAllBytes($"{dir}/Admin/News/PressRelease/20147112448_619.pdf");
+                        byte[] enpdfBytes = System.IO.File.ReadAllBytes(enfilePath);
                         System.IO.File.WriteAllBytes(enfilePath, enpdfBytes);
                         enPdfPath = await ReWriteFilePath(enfilePath, "2");
                     }
                     #endregion
+                    if (news != null)
+                    {
+                        #region Insert Translation 
 
-
-                    var newsTranslation = new NewsTranslation();
-                    newsTranslation.NewsId = news.Id;
-                    newsTranslation.Locale = "en";
-                    newsTranslation.Title = targetNew.NewsNameEn;
-                    newsTranslation.Brief = targetNew.NewsBriefEn;
-                    newsTranslation.PdfUrl = enPdfPath != null ? enPdfPath : "https://capmas.gov.eg" + file.NL_LinkEn;
-                    await _capmasContext.NewsTranslations.AddAsync(newsTranslation);
-                    await _capmasContext.SaveChangesAsync();
-                    #endregion
+                        var newsTranslation = new NewsTranslation();
+                        newsTranslation.NewsId = news.Id;
+                        newsTranslation.Locale = "en";
+                        newsTranslation.Title = targetNew.NewsNameEn;
+                        newsTranslation.Brief = targetNew.NewsBriefEn;
+                        newsTranslation.PdfUrl = enPdfPath != null ? enPdfPath : file.NL_LinkEn;
+                        await _capmasContext.NewsTranslations.AddAsync(newsTranslation);
+                        await _capmasContext.SaveChangesAsync();
+                        #endregion
+                    }
                 }
             }
 

@@ -31,7 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\recycle_news_en_pdf\" />
     <Folder Include="wwwroot\new_Pdf\" />
+    <Folder Include="wwwroot\recycle_news_ar_pdf\" />
   </ItemGroup>
 
 </Project>
