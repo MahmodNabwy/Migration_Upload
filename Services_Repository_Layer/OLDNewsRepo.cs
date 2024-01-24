@@ -47,5 +47,23 @@ namespace Services_Repository_Layer
                                 }).ToListAsync();
             return result;
         }
+        public async Task<List<OldNewsImagesDTO>> GetAllNewsImages()
+        {
+            var result = await (from q in _context.TblNews.AsNoTracking()
+                                where q.NewsIsPublished == true && q.NewsVisible == true
+
+                                select new OldNewsImagesDTO
+                                {
+                                    news_id = q.NewsId,
+                                    BriefAr = q.NewsBriefAr,
+                                    BriefEn = q.NewsBriefEn,
+                                    NameAr = q.NewsNameAr,
+                                    NameEn = q.NewsNameEn,
+                                    News_IconLink = q.NewsIconLink,
+                                    PublishDate = q.NewsPublishDate,
+
+                                }).ToListAsync();
+            return result;
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace IServices_Repository_Layer
     {
         Task<List<OldNewsDTO>> GetAllNews();
         Task<List<oldNewsFilesDTO>> GetAllNewsFiles();
+        Task<List<OldNewsImagesDTO>> GetAllNewsImages();
     }
 }

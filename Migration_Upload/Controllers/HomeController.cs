@@ -52,9 +52,14 @@ namespace Migration_Upload.Controllers
             using (WebClient webClient = new WebClient())
             {
                 var pdfBytes = await webClient.DownloadDataTaskAsync(new Uri(pdfUrl));
+                var dir = _hostingEnvironment.WebRootPath;
+                string relativePath = "recycle_news_ar_pdf";
+                string currentDirectory = Directory.GetCurrentDirectory();
 
+
+                var fullPath = Path.Combine(dir, relativePath);
                 var pdfFileName = Path.GetFileName(new Uri(pdfUrl).LocalPath);
-                var pdfFilePath = Path.Combine(wwwrootPath, pdfFileName);
+                var pdfFilePath = Path.Combine(fullPath, pdfFileName);
 
                 await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
             }
@@ -81,9 +86,6 @@ namespace Migration_Upload.Controllers
                 {
                     content.Add(new StreamContent(fileStream), "files", Path.GetFileName(file));
                     content.Add(new StringContent(directory), "directory");
-
-                    //content.Add(new StreamContent(System.IO.File.OpenRead(file)), "files", file);
-                    //content.Add(new StringContent(directory), "directory");
 
                     var url = _configuration.GetSection("EndPoint").Value;
                     var response = await httpClient.PostAsync(url, content);
@@ -114,29 +116,32 @@ namespace Migration_Upload.Controllers
 
 
         [HttpPost]
-        [Route("MergeNewsFiles")]
-        public async Task<IActionResult> MergeNewsFiles()
+        [Route("MergeNewsPdfFiles")]
+        public async Task<IActionResult> MergeNewsPdfFiles()
         {
             //1-Get All News Files From (NewCapmasWebsiteContext-tblNewsFiles) [Note We Want to get all .pdf files]
             var oldNewsFiles = await _oldNewsRepo.GetAllNewsFiles();
             var dir = _hostingEnvironment.WebRootPath;
             var newsList = new List<New_News_DTO>();
+            var url = _configuration.GetSection("urlPath").Value;
+
             foreach (var file in oldNewsFiles)
             {
                 //2-Get All News Objects From (NewCapmasWebsiteContext-tblNews)
-                var targetNew = _oldContext.TblNews.AsNoTracking().Where(c => c.NewsId == file.News_ID).FirstOrDefault();
+                var targetNew = _oldContext.TblNews.AsNoTracking().Where(c => c.NewsId == file.News_ID && c.NewsIsPublished == true && c.NewsVisible == true).FirstOrDefault();
                 if (targetNew is not null)
                 {
 
                     #region Re Write AR Path
                     string filePath = $"{dir}{file.NL_LinkAr}";
                     string? arPdfPath = null;
-                    //using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    //{
-                    //    byte[] pdfBytes = System.IO.File.ReadAllBytes(filePath);
-                    //    System.IO.File.WriteAllBytes(filePath, pdfBytes);
-                    //    arPdfPath = await ReWriteFilePath(filePath, "2");
-                    //}
+
+                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        byte[] pdfBytes = System.IO.File.ReadAllBytes(filePath);
+                        System.IO.File.WriteAllBytes(filePath, pdfBytes);
+                        arPdfPath = await ReWriteFilePath(filePath, "2");
+                    }
                     #endregion
 
 
@@ -158,19 +163,25 @@ namespace Migration_Upload.Controllers
                         await _capmasContext.SaveChangesAsync();
                         #endregion
                     }
+                    //Store the failed ar pdf to recycle_news_ar_pdf
                     else
                     {
-                        //Store the failed ar pdf to recycle_news_ar_pdf
+                        var pdfUrl = $"{url}{file.NL_LinkAr}";
                         var pdfBytes = System.IO.File.ReadAllBytes(filePath);
 
-                        var pdfFileName =  $"{dir}/recycle_news_ar_pdf";
-                        var pdfFilePath = Path.Combine(dir, pdfFileName);
+                        string relativePath = "recycle_news_ar_pdf";
+                        string currentDirectory = Directory.GetCurrentDirectory();
+
+
+                        var fullPath = Path.Combine(dir, relativePath);
+                        var pdfFileName = Path.GetFileName(new Uri(pdfUrl).LocalPath);
+                        var pdfFilePath = Path.Combine(fullPath, pdfFileName);
 
                         await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
+
                     }
 
                     #region Re Write EN Path          
-
 
                     string enfilePath = $"{dir}{file.NL_LinkEn}";
                     string? enPdfPath = null;
@@ -182,7 +193,8 @@ namespace Migration_Upload.Controllers
                         enPdfPath = await ReWriteFilePath(enfilePath, "2");
                     }
                     #endregion
-                    if (news != null)
+                    //Check If News Is Successfully added and the path is converted 
+                    if (news.Id != 0 && enPdfPath is not null)
                     {
                         #region Insert Translation 
 
@@ -191,16 +203,134 @@ namespace Migration_Upload.Controllers
                         newsTranslation.Locale = "en";
                         newsTranslation.Title = targetNew.NewsNameEn;
                         newsTranslation.Brief = targetNew.NewsBriefEn;
-                        newsTranslation.PdfUrl = enPdfPath != null ? enPdfPath : file.NL_LinkEn;
+                        newsTranslation.PdfUrl = enPdfPath;
                         await _capmasContext.NewsTranslations.AddAsync(newsTranslation);
                         await _capmasContext.SaveChangesAsync();
                         #endregion
+                    }
+                    //Store the failed en pdf to recycle_news_en_pdf
+                    else
+                    {
+                        var pdfUrl = $"{url}{file.NL_LinkEn}";
+
+
+                        var pdfBytes = System.IO.File.ReadAllBytes(filePath);
+
+
+                        string relativePath = "recycle_news_en_pdf";
+                        string currentDirectory = Directory.GetCurrentDirectory();
+
+
+                        var fullPath = Path.Combine(dir, relativePath);
+                        var pdfFileName = Path.GetFileName(new Uri(pdfUrl).LocalPath);
+                        var pdfFilePath = Path.Combine(fullPath, pdfFileName);
+
+                        await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
+
                     }
                 }
             }
 
             return Ok(newsList);
         }
+
+
+        [HttpPost]
+        [Route("MergeNewsImages")]
+        public async Task<IActionResult> MergeNewsImages()
+        {
+            var oldImagesList = await _oldNewsRepo.GetAllNewsImages();
+            var dir = _hostingEnvironment.WebRootPath;
+            var newsList = new List<New_News_DTO>();
+            var url = _configuration.GetSection("urlPath").Value;
+            foreach (var item in oldImagesList)
+            {
+                #region Re Write AR Path
+                string filePath = $"{dir}{item.News_IconLink}";
+                string? arImgPath = null;
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    byte[] pdfBytes = System.IO.File.ReadAllBytes(filePath);
+                    System.IO.File.WriteAllBytes(filePath, pdfBytes);
+                    arImgPath = await ReWriteFilePath(filePath, "2");
+                }
+                #endregion
+
+                var news = new News();
+                if (arImgPath != null)
+                {
+                    #region Insert News
+                    news.Brief = item.BriefAr;
+                    news.IsPdf = false;
+                    news.Image = arImgPath;
+                    news.PublishDate = item.PublishDate;
+                    news.Title = item.NameAr;
+                    news.IsPublished = true;
+                    news.IsDeleted = false;
+                    news.Status = 3;
+
+                    await _capmasContext.News.AddAsync(news);
+                    await _capmasContext.SaveChangesAsync();
+                    #endregion
+                }
+                //Store the failed ar img to recycle_news_ar_img
+                else
+                {
+                    var imgUrl = $"{url}{item.News_IconLink}";
+                    var imgBytes = System.IO.File.ReadAllBytes(filePath);
+
+                    string relativePath = "recycle_news_ar_img";
+                    string currentDirectory = Directory.GetCurrentDirectory();
+
+
+                    var fullPath = Path.Combine(dir, relativePath);
+                    var imgFileName = Path.GetFileName(new Uri(imgUrl).LocalPath);
+                    var imgFilePath = Path.Combine(fullPath, imgFileName);
+
+                    await System.IO.File.WriteAllBytesAsync(imgFilePath, imgBytes);
+
+                }
+
+                //Check If News Is Successfully added and the path is converted 
+                if (news.Id != 0 && arImgPath is not null)
+                {
+                    #region Insert Translation 
+
+                    var newsTranslation = new NewsTranslation();
+                    newsTranslation.NewsId = news.Id;
+                    newsTranslation.Locale = "en";
+                    newsTranslation.Title = item.NameEn;
+                    newsTranslation.Brief = item.BriefEn;
+                    newsTranslation.PdfUrl = arImgPath;
+                    await _capmasContext.NewsTranslations.AddAsync(newsTranslation);
+                    await _capmasContext.SaveChangesAsync();
+                    #endregion
+                }
+                //Store the failed en img to recycle_news_en_img
+                else
+                {
+                    var imgUrl = $"{url}{item.News_IconLink}";
+
+
+                    var imgBytes = System.IO.File.ReadAllBytes(filePath);
+
+
+                    string relativePath = "recycle_news_en_img";
+                    string currentDirectory = Directory.GetCurrentDirectory();
+
+
+                    var fullPath = Path.Combine(dir, relativePath);
+                    var imgFileName = Path.GetFileName(new Uri(imgUrl).LocalPath);
+                    var imgFilePath = Path.Combine(fullPath, imgFileName);
+
+                    await System.IO.File.WriteAllBytesAsync(imgFilePath, imgBytes);
+
+                }
+            }
+            return Ok(oldImagesList);
+        }
+
 
         [HttpPost]
         [Route("MergeEgyptStatisticsJournalFiles")]
