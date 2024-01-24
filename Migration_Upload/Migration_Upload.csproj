@@ -32,6 +32,9 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Admin\Uploads\" />
+    <Folder Include="wwwroot\recycle_magazine_en_pdf\" />
+    <Folder Include="wwwroot\recycle_magazine_ar_pdf\" />
+    <Folder Include="wwwroot\pdf\new_Pdf\" />
     <Folder Include="wwwroot\recycle_news_en_img\" />
     <Folder Include="wwwroot\recycle_news_ar_img\" />
     <Folder Include="wwwroot\recycle_news_en_pdf\" />

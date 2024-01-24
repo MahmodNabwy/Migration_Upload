@@ -46,8 +46,7 @@ namespace Migration_Upload.Controllers
             _configuration = configuration;
         }
 
-
-        private async Task DownloadAndSavePdf(string pdfUrl)
+        private async Task DownloadAndSaveNewsPdf(string pdfUrl)
         {
             using (WebClient webClient = new WebClient())
             {
@@ -62,6 +61,31 @@ namespace Migration_Upload.Controllers
                 var pdfFilePath = Path.Combine(fullPath, pdfFileName);
 
                 await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
+            }
+        }
+        private async Task DownloadAndSaveMagazinePdf(string pdfUrl)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                if (pdfUrl.Contains("census"))
+                {
+
+                }
+                else
+                {
+
+                    var pdfBytes = await webClient.DownloadDataTaskAsync(new Uri(pdfUrl));
+                    var dir = _hostingEnvironment.WebRootPath;
+                    string relativePath = "pdf/new_Pdf";
+                    string currentDirectory = Directory.GetCurrentDirectory();
+
+
+                    var fullPath = Path.Combine(dir, relativePath);
+                    var pdfFileName = Path.GetFileName(new Uri(pdfUrl).LocalPath);
+                    var pdfFilePath = Path.Combine(fullPath, pdfFileName);
+
+                    await System.IO.File.WriteAllBytesAsync(pdfFilePath, pdfBytes);
+                }
             }
         }
 
@@ -89,7 +113,7 @@ namespace Migration_Upload.Controllers
 
                     var url = _configuration.GetSection("EndPoint").Value;
                     var response = await httpClient.PostAsync(url, content);
-                    if (response.IsSuccessStatusCode)
+                     if (response.IsSuccessStatusCode)
                     {
                         var result = await response.Content.ReadAsStringAsync();
                         var responseModel = JsonConvert.DeserializeObject<ResponseModel>(result);
@@ -331,6 +355,21 @@ namespace Migration_Upload.Controllers
             return Ok(oldImagesList);
         }
 
+        [HttpPost]
+        [Route("DownloadEgyptStatisticsJournalFiles")]
+        public async Task<IActionResult> DownloadEgyptStatisticsJournalFiles()
+        {
+            var historyDetails = await _history_Details_Repo.GetAllHistoryDetails();
+            var dir = _hostingEnvironment.WebRootPath;
+            var url = _configuration.GetSection("urlPath").Value;
+            //Example :new_Pdf/2017220115351_احصاء مصر.pdf
+            foreach (var item in historyDetails)
+            {
+                var pdfURL = $"{url}/pdf/{item.PDF_En}";
+                await DownloadAndSaveMagazinePdf(pdfURL);
+            }
+            return Ok();
+        }
 
         [HttpPost]
         [Route("MergeEgyptStatisticsJournalFiles")]
@@ -346,12 +385,12 @@ namespace Migration_Upload.Controllers
                 #region Insert EgyptStatisticsJournals
 
                 #region Re Write Path AR
-                string filePath = Path.Combine(dir, $"{item.PDF_Ar}");
+                string filePath = Path.Combine(dir, $"pdf/{item.PDF_Ar}");
                 string? newPdfPath = null;
                 using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
 
-                    byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}/${item.PDF_Ar}");
+                    byte[] pdfBytes = System.IO.File.ReadAllBytes($"{dir}/pdf/{item.PDF_Ar}");
                     System.IO.File.WriteAllBytes(filePath, pdfBytes);
                     newPdfPath = await ReWriteFilePath(filePath, "14");
                 }
@@ -359,41 +398,48 @@ namespace Migration_Upload.Controllers
 
 
                 var egy_statistics_journal = new EgyptStatisticsJournal();
-                egy_statistics_journal.Year = int.Parse(item.Year);
-                egy_statistics_journal.IsPdf = true;
-                egy_statistics_journal.Url = newPdfPath != null ? newPdfPath : "https://capmas.gov.eg/" + item.PDF_Ar;
-                egy_statistics_journal.Title = item.titleAr;
-                egy_statistics_journal.IsPublished = true;
-                egy_statistics_journal.IsDeleted = false;
-                egy_statistics_journal.Status = 3;
+                if (newPdfPath != null)
+                {
 
-                await _capmasContext.EgyptStatisticsJournals.AddAsync(egy_statistics_journal);
-                await _capmasContext.SaveChangesAsync();
+                    egy_statistics_journal.Year = int.Parse(item.Year);
+                    egy_statistics_journal.IsPdf = true;
+                    egy_statistics_journal.Url = newPdfPath;
+                    egy_statistics_journal.Title = item.titleAr;
+                    egy_statistics_journal.IsPublished = true;
+                    egy_statistics_journal.IsDeleted = false;
+                    egy_statistics_journal.Status = 3;
+
+                    await _capmasContext.EgyptStatisticsJournals.AddAsync(egy_statistics_journal);
+                    await _capmasContext.SaveChangesAsync();
+                }
                 #endregion
 
                 #region Insert Translation
 
                 #region Re Write Path EN
-                string fileENPath = Path.Combine(dir, $"{item.PDF_En}");
+                string fileENPath = Path.Combine(dir, $"pdf/{item.PDF_En}");
                 string? enPdfPath = null;
                 using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
 
-                    byte[] pdfENBytes = System.IO.File.ReadAllBytes($"{dir}/${item.PDF_En}");
+                    byte[] pdfENBytes = System.IO.File.ReadAllBytes($"{dir}/pdf/{item.PDF_En}");
                     System.IO.File.WriteAllBytes(fileENPath, pdfENBytes);
                     enPdfPath = await ReWriteFilePath(fileENPath, "14");
                 }
                 #endregion
+                if (egy_statistics_journal.Id != 0 && enPdfPath != null)
+                {
 
-                var egy_statistics_translation = new EgyptStatisticsJournalTranslation();
-                egy_statistics_translation.EgyptStatisticsJournalId = egy_statistics_journal.Id;
-                egy_statistics_translation.Locale = "en";
-                egy_statistics_translation.Title = item.titleEn;
-                egy_statistics_translation.PdfUrl = enPdfPath != null ? enPdfPath : "https://capmas.gov.eg/" + item.PDF_En;
+                    var egy_statistics_translation = new EgyptStatisticsJournalTranslation();
+                    egy_statistics_translation.EgyptStatisticsJournalId = egy_statistics_journal.Id;
+                    egy_statistics_translation.Locale = "en";
+                    egy_statistics_translation.Title = item.titleEn;
+                    egy_statistics_translation.PdfUrl = enPdfPath;
 
 
-                await _capmasContext.EgyptStatisticsJournalTranslations.AddAsync(egy_statistics_translation);
-                await _capmasContext.SaveChangesAsync();
+                    await _capmasContext.EgyptStatisticsJournalTranslations.AddAsync(egy_statistics_translation);
+                    await _capmasContext.SaveChangesAsync();
+                }
 
                 #endregion
 
@@ -401,5 +447,6 @@ namespace Migration_Upload.Controllers
             }
             return Ok(historyDetails);
         }
+
     }
 }
