@@ -88,14 +88,13 @@ namespace Migration_Upload.Controllers
                 }
             }
         }
-
-
         private async Task<string?> ReWriteFilePath(string file, string directory)
         {
             using (var httpClient = new HttpClient())
             {
                 var origin = _configuration.GetSection("origin").Value;
                 var refer = _configuration.GetSection("refer").Value;
+                var token = _configuration.GetSection("token").Value;
 
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json, text/plain, */*");
                 httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-EG,en;q=0.9,ar-EG;q=0.8,ar;q=0.7,en-GB;q=0.6,en-US;q=0.5");
@@ -103,7 +102,7 @@ namespace Migration_Upload.Controllers
                 httpClient.DefaultRequestHeaders.Add("Origin", origin);
                 httpClient.DefaultRequestHeaders.Add("Referer", refer);
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
-                httpClient.DefaultRequestHeaders.Add("Authorization", "0000G018UDYL6E6J1JK0Y6P3D8HIWD0L0C4Z794BR0W0K1F00DNW9FASI61H1MTINCFGWBW0UJMX23S4S0WZ2AL5ORB9ZHLWK2YHL7PHE2O87X1TIWFKEIZJSMJ37ARFBOTSSL561A252UCR4TSFL1C5ZPRPZI4VCC147IIZ1IJR9J01HFVU0FSHLVVZ30X2ZMI0CSEIF3UWQ9SCTMHCE43GFTQMPDESKOM257KG359FZEL312SHQDWBTY58806IZKQSAABJI806844LC02P0I43Q6M9FRA60DKO2YQJLDAQN46PZ1Q3ABUE15975F2NOGJ480S8PTY2QN6O27XOXUDS0THWY9XPRK08Y3SLXCYZ57044K3C5M2VLBEC3SE284SP4XK35VIR2T0S7T5JQZ1AR17VNQPLW4ZYNI1B1SCU5A77W2C0CUHF304J6VES0Z9FL3TJ2SZC50VXF9NHC83BXZ2PUOXZUJG869T20C69L00034IL2K44HRHM5G7NA3T2ENBLSV782C0C54ZXLDW0Q5R106LALLSR0YP0116AWI081IMIR25FHO1U8CHK1X12INP807X8IMS1FXULGSRBOS8E1US425COS5QAB1K2RZ794PQQPG1KRV7KE41KIP12UUIP5FHWNAZ31X6AVIE9CIJ8Q2UL9V15O1ORJA219SOOXRHAIBV15OWQH2EB1YAB205OISW49FL670HFAB6G67LDNL086B6LRPMVXMG08FL1ABM56AQ02LINLSOL95EGP3K6L94FDWA9LJ0IU2VLYCBNPO32B9S7Y71MIH3G0EARLKNGP69QT3OZ5490XR9WMJ1BR4WZZ2JCIF6395EYGOHN0TUH0ZCHXAJL944EI2BOJAFZR4XQP70A6H4L22LK89E30G3LRZGKP5TX2WNQ4M51F3ED22AH2CK1H3E8PK");
+                httpClient.DefaultRequestHeaders.Add("Authorization", token);
 
                 var content = new MultipartFormDataContent();
                 using (var fileStream = System.IO.File.OpenRead(file))
@@ -138,7 +137,6 @@ namespace Migration_Upload.Controllers
 
         }
 
-
         [HttpPost]
         [Route("MergeNewsPdfFiles")]
         public async Task<IActionResult> MergeNewsPdfFiles()
@@ -152,7 +150,7 @@ namespace Migration_Upload.Controllers
             foreach (var file in oldNewsFiles)
             {
                 //2-Get All News Objects From (NewCapmasWebsiteContext-tblNews)
-                var targetNew = _oldContext.TblNews.AsNoTracking().Where(c => c.NewsId == file.News_ID && c.NewsIsPublished == true && c.NewsVisible == true).FirstOrDefault();
+                var targetNew = await _oldContext.TblNews.AsNoTracking().Where(c => c.NewsId == file.News_ID && c.NewsIsPublished == true && c.NewsVisible == true).FirstOrDefaultAsync();
                 if (targetNew is not null)
                 {
 
@@ -258,7 +256,6 @@ namespace Migration_Upload.Controllers
             return Ok(newsList);
         }
 
-
         [HttpPost]
         [Route("MergeNewsImages")]
         public async Task<IActionResult> MergeNewsImages()
@@ -362,7 +359,7 @@ namespace Migration_Upload.Controllers
             var historyDetails = await _history_Details_Repo.GetAllHistoryDetails();
             var dir = _hostingEnvironment.WebRootPath;
             var url = _configuration.GetSection("urlPath").Value;
-            //Example :new_Pdf/2017220115351_احصاء مصر.pdf
+            
             foreach (var item in historyDetails)
             {
                 var pdfURL = $"{url}/pdf/{item.PDF_En}";
@@ -379,7 +376,7 @@ namespace Migration_Upload.Controllers
             var historyDetails = await _history_Details_Repo.GetAllHistoryDetails();
             var dir = _hostingEnvironment.WebRootPath;
 
-            //Example :new_Pdf/2017220115351_احصاء مصر.pdf
+             
             foreach (var item in historyDetails)
             {
                 #region Insert EgyptStatisticsJournals
